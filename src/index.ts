@@ -1,18 +1,33 @@
-import "dotenv/config";
-import { Client } from "discord.js";
+import dotenv from 'dotenv';
+import { Client, IntentsBitField, Partials } from 'discord.js';
+import eventHandler from './handlers/EventHandler';
 
-const client = new Client({
-  intents: ["MessageContent"],
+dotenv.config();
+
+const client: Client = new Client({
+  intents: [
+    IntentsBitField.Flags.Guilds,
+    IntentsBitField.Flags.GuildMessages,
+    IntentsBitField.Flags.MessageContent,
+    IntentsBitField.Flags.GuildMessageReactions
+  ],
+  partials: [
+    Partials.Channel,
+    Partials.Message,
+    Partials.Reaction,
+    Partials.User
+  ],
 });
 
-client.on("ready", (c) => {
-  console.log(`${c.user.username} is online with tag ${c.user.tag}`);
-});
 
-client.on("messageCreate", (m) => {
-  if (m.content === "!ready") {
-    m.reply("I am online and ready.");
+
+
+
+(async () => {
+  try {
+    eventHandler(client);
+    await client.login(process.env.TOKEN);
+  } catch (error) {
+    console.error(`Error: ${error}`);
   }
-});
-
-client.login(process.env.TOKEN);
+})();
