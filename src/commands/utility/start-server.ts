@@ -3,11 +3,11 @@ import { shouldSendResponse } from "../../utility/validate";
 
 
 export const data = new SlashCommandBuilder()
-.setName("server-status")
-.setDescription("Check if a specified server is currently on/off")
+.setName("start-server")
+.setDescription("Starts the specified server")
 .addStringOption(o =>  
     o.setName("server-name")
-    .setDescription("The name of the server to check the status for")
+    .setDescription("The name of the server to attempt to start")
     .setChoices({name: 'Valheim', value: 'valheim'}, {name: 'TheForest', value: 'forest'})
     .setRequired(true)
 );
@@ -25,18 +25,16 @@ export async function execute(client: Client, interaction: CommandInteraction) {
                 `No Server Id provided <@${interaction.member!.user.id}>`,
             );
         } else {
-            const serverUrl = `${process.env.APIBASEURL}/server-status/${serverId?.value}` 
-
-            console.log(serverUrl)
+            const serverUrl = `${process.env.APIBASEURL}/start-server/${serverId?.value}` 
     
             const response = await fetch(serverUrl, {
-                method: 'GET'
+                method: 'POST'
             })
     
-            const reply = JSON.stringify(await response.json());
+            const reply = await response.text();
     
             await interaction.reply(
-                `Is ${serverId?.value} server on => ${reply} <@${interaction.member!.user.id}>`,
+                `${reply} <@${interaction.member!.user.id}>`,
             );
         }
     }
