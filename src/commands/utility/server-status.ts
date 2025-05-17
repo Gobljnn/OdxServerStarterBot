@@ -26,8 +26,6 @@ export async function execute(client: Client, interaction: CommandInteraction) {
             );
         } else {
             const serverUrl = `${process.env.APIBASEURL}/server-status/${serverId?.value}` 
-
-            console.log(serverUrl)
     
             const response = await fetch(serverUrl, {
                 method: 'GET'
